@@ -18,7 +18,7 @@ fi
 # Clean up any old containers (optional)
 # docker compose down -v || true
 
-# 1. Start DB (and web, but web will restart if DB not ready)
+# 1. Start DB (and odoo, but odoo will restart if DB not ready)
 docker compose up -d --remove-orphans db
 
 # 2. Wait for PostgreSQL to be ready
@@ -43,7 +43,7 @@ docker compose exec db psql -U "${POSTGRES_USER}" -tc "SELECT 1 FROM pg_database
   docker compose exec db createdb -U "${POSTGRES_USER}" "${POSTGRES_DB}"
 
 # 4. Initialise Odoo base module
-docker compose run --rm web \
+docker compose run --rm odoo \
   odoo -c /etc/odoo/odoo.conf -d "${POSTGRES_DB}" -i base --stop-after-init
 
 echo "Base module initialised. Now starting Odoo in normal mode..."
