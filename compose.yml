@@ -22,6 +22,7 @@ services:
       - "${ODEV_PORT}:8018"
     volumes:
       - ./odoo.conf:/etc/odoo/odoo.conf
+      - ./base_addons:/usr/lib/python3/dist-packages/odoo/addons
       - ./addons:/mnt/extra-addons
       - odoo-web-data:/var/lib/odoo
       - ./odoo-logs:/var/log/odoo
