@@ -8,11 +8,12 @@ services:
       - PGDATA=/var/lib/postgresql/data/pgdata
     volumes:
       - odoo-db-data:/var/lib/postgresql/data/pgdata
-    networks:
-      - odoonet
+    ports:
+      - "5432:5432"
+    networks: [odoonet]
 
-  web:
-    image: odoo:18.0
+  odoo:
+    build: .
     environment:
       - HOST=db
       - USER=${POSTGRES_USER}
@@ -23,12 +24,23 @@ services:
       - ./odoo.conf:/etc/odoo/odoo.conf
       - ./addons:/mnt/extra-addons
       - odoo-web-data:/var/lib/odoo
-    networks:
-      - odoonet
+      - ./odoo-logs:/var/log/odoo
+    networks: [odoonet]
+    develop:
+      watch:
+        - path: ./addons
+          action: sync
+          target: /mnt/extra-addons
+        - path: ./odoo.conf
+          action: sync
+          target: /etc/odoo/odoo.conf
+        - path: ./Dockerfile
+          action: rebuild
 
 volumes:
   odoo-db-data:
   odoo-web-data:
-
+  
 networks:
   odoonet:
+    driver: bridge
